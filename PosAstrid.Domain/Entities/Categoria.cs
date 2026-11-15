@@ -1,6 +1,6 @@
 namespace PosAstrid.Domain.Entities
 {
-    public class Categoria
+    public sealed class Categoria
     {
         public int Id { get; private set; }
         public string Nombre { get; private set; } = string.Empty;
@@ -16,7 +16,7 @@ namespace PosAstrid.Domain.Entities
             Activo = true;
         }
 
-        protected Categoria() { }
+        private Categoria() { }
 
         public void ActualizarNombre(string nuevoNombre)
         {

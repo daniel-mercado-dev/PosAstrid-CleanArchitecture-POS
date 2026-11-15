@@ -1,6 +1,6 @@
 namespace PosAstrid.Domain.Entities
 {
-    public class VentaCabecera
+    public sealed class VentaCabecera
     {
         public int Id { get; private set; }
         public DateTime Fecha { get; private set; } = DateTime.Now;
@@ -27,7 +27,7 @@ namespace PosAstrid.Domain.Entities
         }
 
         // 3. Constructor protegido requerido por Entity Framework Core
-        protected VentaCabecera() { }
+        private VentaCabecera() { }
 
         // 4. Método de negocio para agregar un detalle de forma segura
         public void AgregarDetalle(int? productoId, string productoNombre, int cantidad, decimal precioUnitario)

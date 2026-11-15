@@ -1,6 +1,6 @@
 namespace PosAstrid.Domain.Entities
 {
-    public class Producto
+    public sealed class Producto
     {
         public int Id { get; private set; }
         public string Nombre { get; private set; } = string.Empty;
@@ -16,7 +16,7 @@ namespace PosAstrid.Domain.Entities
             CategoriaId = categoriaId;
         }
 
-        protected Producto() { }
+        private Producto() { }
 
         public void ActualizarDatos(string nombre, decimal precioBase, int categoriaId)
         {

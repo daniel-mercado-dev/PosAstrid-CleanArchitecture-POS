@@ -1,6 +1,6 @@
 namespace PosAstrid.Domain.Entities
 {
-    public class Usuario
+    public sealed class Usuario
     {
         public int Id { get; private set; }
         public string NombreCompleto { get; private set; } = string.Empty;
@@ -28,7 +28,7 @@ namespace PosAstrid.Domain.Entities
         }
 
         // 2. Constructor protegido obligatorio para que Entity Framework Core lea de la BD
-        protected Usuario() { }
+        private Usuario() { }
 
         // 3. Métodos de negocio controlados (en lugar de usar setters libres)
         public void ActualizarInformacion(string nombreCompleto, string rol)
