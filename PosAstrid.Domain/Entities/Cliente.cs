@@ -1,10 +1,11 @@
+using PosAstrid.Domain.Abstractions;
+
 namespace PosAstrid.Domain.Entities
 {
-    public sealed class Cliente
+    public sealed class Cliente : Entity
     {
-        public int Id { get; private set; }
         public string Nombre { get; private set; } = string.Empty;
-        public string TipoDocumento { get; private set; } = string.Empty; // DNI / RUC
+        public string TipoDocumento { get; private set; } = string.Empty; 
         public string NumeroDocumento { get; private set; } = string.Empty;
         public string? Direccion { get; private set; }
         public string? Telefono { get; private set; }

@@ -1,8 +1,8 @@
+using PosAstrid.Domain.Abstractions;
 namespace PosAstrid.Domain.Entities
 {
-    public class VentaDetalle
+    public class VentaDetalle : Entity
     {
-        public int Id { get; private set; }
         public int VentaCabeceraId { get; private set; }
         public VentaCabecera? Cabecera { get; private set; }
 
@@ -14,7 +14,7 @@ namespace PosAstrid.Domain.Entities
         public decimal PrecioUnitario { get; private set; }
 
         // Constructor para obligar a pasar los datos requeridos al crear el detalle
-        public VentaDetalle(int? productoId, string productoNombre, int cantidad, decimal precioUnitario)
+        internal VentaDetalle(int? productoId, string productoNombre, int cantidad, decimal precioUnitario)
         {
             ProductoId = productoId;
             ProductoNombre = productoNombre;
@@ -23,6 +23,6 @@ namespace PosAstrid.Domain.Entities
         }
 
         // Constructor protegido requerido por Entity Framework Core para poder reconstruir el objeto desde la BD
-        protected VentaDetalle() { }
+        private VentaDetalle() { }
     }
 }

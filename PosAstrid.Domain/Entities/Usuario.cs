@@ -1,8 +1,9 @@
+using PosAstrid.Domain.Abstractions;
+
 namespace PosAstrid.Domain.Entities
 {
-    public sealed class Usuario
+    public sealed class Usuario : Entity    
     {
-        public int Id { get; private set; }
         public string NombreCompleto { get; private set; } = string.Empty;
         public string Username { get; private set; } = string.Empty;
         public string PasswordHash { get; private set; } = string.Empty;
@@ -17,7 +18,7 @@ namespace PosAstrid.Domain.Entities
         public IReadOnlyCollection<VentaCabecera> Ventas => _ventas.AsReadOnly();
 
         // 1. Constructor para registrar un nuevo usuario obligatoriamente con sus datos base
-        public Usuario(string nombreCompleto, string username, string passwordHash, string rol = "Cajero")
+        private Usuario(string nombreCompleto, string username, string passwordHash, string rol = "Cajero")
         {
             NombreCompleto = nombreCompleto;
             Username = username;
@@ -29,6 +30,15 @@ namespace PosAstrid.Domain.Entities
 
         // 2. Constructor protegido obligatorio para que Entity Framework Core lea de la BD
         private Usuario() { }
+
+        public static Usuario Crear(string nombreCompleto, string username, string passwordHash, string rol = "Cajero")
+        {
+            // Aquí puedes meter validaciones de negocio si lo deseas (ej: username no vacío)
+            if (string.IsNullOrWhiteSpace(username))
+                throw new ArgumentException("El nombre de usuario es obligatorio.");
+
+            return new Usuario(nombreCompleto, username, passwordHash, rol);
+        }
 
         // 3. Métodos de negocio controlados (en lugar de usar setters libres)
         public void ActualizarInformacion(string nombreCompleto, string rol)

@@ -1,8 +1,10 @@
+using PosAstrid.Domain.Abstractions;
+using PosAstrid.Domain.Events;
 namespace PosAstrid.Domain.Entities
 {
-    public sealed class VentaCabecera
+    public sealed class VentaCabecera : Entity
+
     {
-        public int Id { get; private set; }
         public DateTime Fecha { get; private set; } = DateTime.Now;
         public decimal MontoTotal { get; private set; }
         public string MetodoPago { get; private set; } = string.Empty; 
@@ -18,7 +20,7 @@ namespace PosAstrid.Domain.Entities
         public Usuario? Usuario { get; private set; }
 
         // 2. Constructor para inicializar la venta de forma obligatoria
-        public VentaCabecera(int usuarioId, string metodoPago, int? clienteId = null)
+        private VentaCabecera(int usuarioId, string metodoPago, int? clienteId = null)
         {
             UsuarioId = usuarioId;
             MetodoPago = metodoPago;
@@ -28,6 +30,22 @@ namespace PosAstrid.Domain.Entities
 
         // 3. Constructor protegido requerido por Entity Framework Core
         private VentaCabecera() { }
+
+        public static VentaCabecera Crear(int usuarioId, string metodoPago, int? clienteId = null)
+{
+    if (usuarioId <= 0)
+        throw new ArgumentException("El ID del usuario es obligatorio para registrar la venta.");
+
+    if (string.IsNullOrWhiteSpace(metodoPago))
+        throw new ArgumentException("El método de pago es obligatorio.");
+
+    var venta = new VentaCabecera(usuarioId, metodoPago, clienteId);
+
+    // 🔥 AQUÍ DISPARAMOS EL EVENTO DE DOMINIO
+    venta.RaiseDomainEvent(new VentaRegistradaDomainEvent(venta.Id, venta.MontoTotal, usuarioId));
+
+    return venta;
+}
 
         // 4. Método de negocio para agregar un detalle de forma segura
         public void AgregarDetalle(int? productoId, string productoNombre, int cantidad, decimal precioUnitario)

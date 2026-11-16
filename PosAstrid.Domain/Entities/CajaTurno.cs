@@ -1,8 +1,8 @@
+using PosAstrid.Domain.Abstractions;
 namespace PosAstrid.Domain.Entities
 {
-    public class CajaTurno
+    public class CajaTurno : Entity
     {
-        public int Id { get; private set; }
         public int UsuarioId { get; private set; }
         public Usuario? Usuario { get; private set; }
         public DateTime FechaApertura { get; private set; } = DateTime.Now;
