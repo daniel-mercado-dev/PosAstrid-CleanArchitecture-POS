@@ -5,7 +5,7 @@ namespace PosAstrid.Domain.Entities
     {
         public int UsuarioId { get; private set; }
         public Usuario? Usuario { get; private set; }
-        public DateTime FechaApertura { get; private set; } = DateTime.Now;
+        public DateTime FechaApertura { get; private set; } = DateTime.UtcNow;
         public DateTime? FechaCierre { get; private set; }
         public decimal MontoApertura { get; private set; }
         public decimal? MontoCierreReal { get; private set; }
@@ -16,7 +16,7 @@ namespace PosAstrid.Domain.Entities
         {
             UsuarioId = usuarioId;
             MontoApertura = montoApertura;
-            FechaApertura = DateTime.Now;
+            FechaApertura = DateTime.UtcNow;
             TotalVentasEfectivo = 0;
             Estado = "Abierto";
         }
@@ -39,7 +39,7 @@ namespace PosAstrid.Domain.Entities
                 throw new InvalidOperationException("Esta caja ya ha sido cerrada.");
 
             MontoCierreReal = montoCierreReal;
-            FechaCierre = DateTime.Now;
+            FechaCierre = DateTime.UtcNow;
             Estado = "Cerrado";
         }
     }

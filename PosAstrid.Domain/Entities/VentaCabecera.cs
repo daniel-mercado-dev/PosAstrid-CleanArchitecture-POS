@@ -5,7 +5,7 @@ namespace PosAstrid.Domain.Entities
     public sealed class VentaCabecera : Entity
 
     {
-        public DateTime Fecha { get; private set; } = DateTime.Now;
+        public DateTime Fecha { get; private set; } = DateTime.UtcNow;
         public decimal MontoTotal { get; private set; }
         public string MetodoPago { get; private set; } = string.Empty; 
 
@@ -25,7 +25,7 @@ namespace PosAstrid.Domain.Entities
             UsuarioId = usuarioId;
             MetodoPago = metodoPago;
             ClienteId = clienteId;
-            Fecha = DateTime.Now;
+            Fecha = DateTime.UtcNow;
         }
 
         // 3. Constructor protegido requerido por Entity Framework Core

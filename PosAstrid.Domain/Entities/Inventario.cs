@@ -30,7 +30,7 @@ namespace PosAstrid.Domain.Entities
             StockInicial = stockInicial;
             StockFinal = stockFinal;
             PrecioUnitario = precioUnitario;
-            Fecha = DateTime.Now;
+            Fecha = DateTime.UtcNow;
         }
 
         // 2. Constructor privado requerido por Entity Framework Core

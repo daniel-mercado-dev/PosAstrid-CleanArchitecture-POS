@@ -11,7 +11,7 @@ namespace PosAstrid.Domain.Entities
         public bool Activo { get; private set; } = true;
 
         // Campo de auditoría muy útil en la vida real
-        public DateTime FechaCreacion { get; private set; } = DateTime.Now;
+        public DateTime FechaCreacion { get; private set; } = DateTime.UtcNow;
 
         // Relación con las ventas realizadas por este usuario
         private readonly List<VentaCabecera> _ventas = new();
@@ -25,7 +25,7 @@ namespace PosAstrid.Domain.Entities
             PasswordHash = passwordHash;
             Rol = rol;
             Activo = true;
-            FechaCreacion = DateTime.Now;
+            FechaCreacion = DateTime.UtcNow;
         }
 
         // 2. Constructor protegido obligatorio para que Entity Framework Core lea de la BD
