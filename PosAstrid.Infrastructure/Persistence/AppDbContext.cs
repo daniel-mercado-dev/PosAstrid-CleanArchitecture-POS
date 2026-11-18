@@ -7,10 +7,10 @@ namespace PosAstrid.Infrastructure.Persistence
     public class AppDbContext : DbContext, IUnitOfWork
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
-
         public DbSet<Producto> Productos => Set<Producto>();
+        public DbSet<Inventario> Inventarios => Set<Inventario>();
         public DbSet<VentaCabecera> VentaCabeceras => Set<VentaCabecera>();
-        // ... tus demás DbSet
+        public DbSet<VentaDetalle> VentaDetalles => Set<VentaDetalle>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
