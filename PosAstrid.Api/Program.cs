@@ -1,12 +1,26 @@
+using Microsoft.EntityFrameworkCore;
+using PosAstrid.Domain.Abstractions;
+using PosAstrid.Domain.Repositories;
+using PosAstrid.Infrastructure.Persistence;
+using PosAstrid.Infrastructure.Repositories;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<IUnitOfWork>(provider => provider.GetRequiredService<AppDbContext>());
+
+// 2. Registrar los repositorios de tu dominio
+builder.Services.AddScoped<IProductoRepository, ProductoRepository>();
+
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
