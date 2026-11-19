@@ -4,6 +4,8 @@ using PosAstrid.Domain.Repositories;
 using PosAstrid.Infrastructure.Persistence;
 using PosAstrid.Infrastructure.Repositories;
 
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
@@ -20,6 +22,8 @@ builder.Services.AddScoped<IProductoRepository, ProductoRepository>();
 builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
 
 builder.Services.AddScoped<IInventarioRepository, InventarioRepository>();
+
+builder.Services.AddScoped<IVentaRepository, VentaRepository>();
 
 
 var app = builder.Build();

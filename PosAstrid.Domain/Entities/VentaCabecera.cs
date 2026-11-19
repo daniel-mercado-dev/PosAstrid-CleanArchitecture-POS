@@ -23,7 +23,7 @@ namespace PosAstrid.Domain.Entities
         private VentaCabecera(int usuarioId, string metodoPago, int? clienteId = null)
         {
             UsuarioId = usuarioId;
-            MetodoPago = metodoPago;
+          MetodoPago = metodoPago.Trim();
             ClienteId = clienteId;
             Fecha = DateTime.UtcNow;
         }
@@ -31,7 +31,12 @@ namespace PosAstrid.Domain.Entities
         // 3. Constructor protegido requerido por Entity Framework Core
         private VentaCabecera() { }
 
-        public static VentaCabecera Crear(int usuarioId, string metodoPago, int? clienteId = null)
+        public void MarcarRegistrada()
+        {
+            RaiseDomainEvent(new VentaRegistradaDomainEvent(Id, MontoTotal, UsuarioId));
+        }
+
+       public static VentaCabecera Crear(int usuarioId, string metodoPago, int? clienteId = null)
 {
     if (usuarioId <= 0)
         throw new ArgumentException("El ID del usuario es obligatorio para registrar la venta.");
@@ -39,23 +44,34 @@ namespace PosAstrid.Domain.Entities
     if (string.IsNullOrWhiteSpace(metodoPago))
         throw new ArgumentException("El método de pago es obligatorio.");
 
-    var venta = new VentaCabecera(usuarioId, metodoPago, clienteId);
+    return new VentaCabecera(usuarioId, metodoPago, clienteId);
+}
 
-    // 🔥 AQUÍ DISPARAMOS EL EVENTO DE DOMINIO
-    venta.RaiseDomainEvent(new VentaRegistradaDomainEvent(venta.Id, venta.MontoTotal, usuarioId));
+public void Confirmar()
+{
+    if (_detalles.Count == 0)
+        throw new InvalidOperationException("La venta debe tener al menos un detalle.");
 
-    return venta;
+    RaiseDomainEvent(new VentaRegistradaDomainEvent(Id, MontoTotal, UsuarioId));
 }
 
         // 4. Método de negocio para agregar un detalle de forma segura
         public void AgregarDetalle(int? productoId, string productoNombre, int cantidad, decimal precioUnitario)
-        {
-            var detalle = new VentaDetalle(productoId, productoNombre, cantidad, precioUnitario);
-            _detalles.Add(detalle);
-            
-            // Recalculamos el total automáticamente cada vez que entra un producto
-            CalcularMontoTotal();
-        }
+{
+    if (string.IsNullOrWhiteSpace(productoNombre))
+        throw new ArgumentException("El nombre del producto es obligatorio.");
+
+    if (cantidad <= 0)
+        throw new ArgumentException("La cantidad debe ser mayor que cero.");
+
+    if (precioUnitario < 0)
+        throw new ArgumentException("El precio unitario no puede ser negativo.");
+
+    var detalle = new VentaDetalle(productoId, productoNombre.Trim(), cantidad, precioUnitario);
+    _detalles.Add(detalle);
+
+    CalcularMontoTotal();
+}
 
         // 5. Lógica interna para calcular el total
         private void CalcularMontoTotal()

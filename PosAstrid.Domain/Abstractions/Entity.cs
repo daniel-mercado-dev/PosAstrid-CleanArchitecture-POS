@@ -12,11 +12,10 @@ namespace PosAstrid.Domain.Abstractions
 
         public IReadOnlyList<IDomainEvent> GetDomainEvents() => _domainEvents.ToList();
 
-        public void ClearDomainEvents() => _domainEvents.Clear();
-
         protected void RaiseDomainEvent(IDomainEvent domainEvent)
         {
             _domainEvents.Add(domainEvent);
         }
+          public void ClearDomainEvents() => _domainEvents.Clear();
     }
 }

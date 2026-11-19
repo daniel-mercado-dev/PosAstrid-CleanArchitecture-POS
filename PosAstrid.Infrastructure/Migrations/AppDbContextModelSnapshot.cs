@@ -35,11 +35,12 @@ namespace PosAstrid.Infrastructure.Migrations
 
                     b.Property<string>("Nombre")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categoria");
+                    b.ToTable("Categoria", (string)null);
                 });
 
             modelBuilder.Entity("PosAstrid.Domain.Entities.Cliente", b =>
@@ -189,10 +190,11 @@ namespace PosAstrid.Infrastructure.Migrations
 
                     b.Property<string>("MetodoPago")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<decimal>("MontoTotal")
-                        .HasColumnType("numeric");
+                        .HasColumnType("numeric(12,2)");
 
                     b.Property<int>("UsuarioId")
                         .HasColumnType("integer");
@@ -203,7 +205,7 @@ namespace PosAstrid.Infrastructure.Migrations
 
                     b.HasIndex("UsuarioId");
 
-                    b.ToTable("VentaCabeceras");
+                    b.ToTable("VentaCabeceras", (string)null);
                 });
 
             modelBuilder.Entity("PosAstrid.Domain.Entities.VentaDetalle", b =>
@@ -218,14 +220,15 @@ namespace PosAstrid.Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     b.Property<decimal>("PrecioUnitario")
-                        .HasColumnType("numeric");
+                        .HasColumnType("numeric(12,2)");
 
                     b.Property<int?>("ProductoId")
                         .HasColumnType("integer");
 
                     b.Property<string>("ProductoNombre")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
 
                     b.Property<int>("VentaCabeceraId")
                         .HasColumnType("integer");
@@ -236,7 +239,7 @@ namespace PosAstrid.Infrastructure.Migrations
 
                     b.HasIndex("VentaCabeceraId");
 
-                    b.ToTable("VentaDetalles");
+                    b.ToTable("VentaDetalles", (string)null);
                 });
 
             modelBuilder.Entity("PosAstrid.Domain.Entities.Inventario", b =>
@@ -244,7 +247,7 @@ namespace PosAstrid.Infrastructure.Migrations
                     b.HasOne("PosAstrid.Domain.Entities.Producto", "Producto")
                         .WithMany()
                         .HasForeignKey("ProductoId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Producto");
@@ -265,12 +268,13 @@ namespace PosAstrid.Infrastructure.Migrations
                 {
                     b.HasOne("PosAstrid.Domain.Entities.Cliente", "Cliente")
                         .WithMany("Ventas")
-                        .HasForeignKey("ClienteId");
+                        .HasForeignKey("ClienteId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("PosAstrid.Domain.Entities.Usuario", "Usuario")
                         .WithMany("Ventas")
                         .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Cliente");
@@ -282,7 +286,8 @@ namespace PosAstrid.Infrastructure.Migrations
                 {
                     b.HasOne("PosAstrid.Domain.Entities.Producto", "Producto")
                         .WithMany()
-                        .HasForeignKey("ProductoId");
+                        .HasForeignKey("ProductoId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("PosAstrid.Domain.Entities.VentaCabecera", "Cabecera")
                         .WithMany("Detalles")
