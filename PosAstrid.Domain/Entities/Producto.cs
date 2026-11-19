@@ -40,6 +40,9 @@ namespace PosAstrid.Domain.Entities
 
             if (precioBase < 0)
                 throw new ArgumentException("El precio base no puede ser negativo.");
+                
+            if (categoriaId <= 0)
+                throw new ArgumentException("Debe asociar el producto a una categoría válida.");
 
             Nombre = nombre;
             PrecioBase = precioBase;

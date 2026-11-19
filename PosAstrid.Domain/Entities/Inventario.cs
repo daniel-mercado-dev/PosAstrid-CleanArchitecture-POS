@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations.Schema;
 using PosAstrid.Domain.Abstractions;
 
 namespace PosAstrid.Domain.Entities
@@ -11,33 +10,28 @@ namespace PosAstrid.Domain.Entities
         public int StockInicial { get; private set; }
         public int StockFinal { get; private set; }
 
-        // SQL Server calcula esta columna automáticamente (StockInicial - StockFinal)
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        // Calculada en la base de datos (ver InventarioConfiguration)
         public int Vendido { get; private set; }
 
         public decimal PrecioUnitario { get; private set; }
 
-        // SQL Server calcula esta columna automáticamente (Vendido * PrecioUnitario)
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        // Calculada en la base de datos (ver InventarioConfiguration)
         public decimal MontoTotal { get; private set; }
 
         public DateTime Fecha { get; private set; }
 
-        // 1. Constructor privado (nadie hace new por fuera)
-        private Inventario(int productoId, int stockInicial, int stockFinal, decimal precioUnitario)
+        private Inventario() { }
+
+        private Inventario(int productoId, int stockInicial, int stockFinal, decimal precioUnitario, DateTime fecha)
         {
             ProductoId = productoId;
             StockInicial = stockInicial;
             StockFinal = stockFinal;
             PrecioUnitario = precioUnitario;
-            Fecha = DateTime.UtcNow;
+            Fecha = fecha;
         }
 
-        // 2. Constructor privado requerido por Entity Framework Core
-        private Inventario() { }
-
-        // 3. Método Estático de Fábrica (controla la instanciación y validaciones)
-        public static Inventario Crear(int productoId, int stockInicial, int stockFinal, decimal precioUnitario)
+        public static Inventario Crear(int productoId, int stockInicial, int stockFinal, decimal precioUnitario, DateTime fecha)
         {
             if (productoId <= 0)
                 throw new ArgumentException("Debe asociar el inventario a un producto válido.");
@@ -51,10 +45,12 @@ namespace PosAstrid.Domain.Entities
             if (precioUnitario < 0)
                 throw new ArgumentException("El precio unitario no puede ser negativo.");
 
-            return new Inventario(productoId, stockInicial, stockFinal, precioUnitario);
+            if (fecha.Kind != DateTimeKind.Utc)
+                throw new ArgumentException("La fecha debe estar en UTC.");
+
+            return new Inventario(productoId, stockInicial, stockFinal, precioUnitario, fecha);
         }
 
-        // 4. Método de negocio para actualizar el stock final con validación
         public void ActualizarStockFinal(int stockFinal)
         {
             if (stockFinal < 0)
@@ -64,6 +60,14 @@ namespace PosAstrid.Domain.Entities
                 throw new ArgumentException("El stock final no puede ser mayor que el stock inicial.");
 
             StockFinal = stockFinal;
+        }
+
+        public void ActualizarPrecio(decimal precioUnitario)
+        {
+            if (precioUnitario < 0)
+                throw new ArgumentException("El precio unitario no puede ser negativo.");
+
+            PrecioUnitario = precioUnitario;
         }
     }
 }
