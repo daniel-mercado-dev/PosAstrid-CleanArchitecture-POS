@@ -22,6 +22,43 @@ namespace PosAstrid.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("PosAstrid.Domain.Entities.CajaTurno", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("FechaApertura")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("FechaCierre")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal>("MontoApertura")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("MontoCierreReal")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("TotalVentasEfectivo")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UsuarioId");
+
+                    b.ToTable("CajaTurno");
+                });
+
             modelBuilder.Entity("PosAstrid.Domain.Entities.Categoria", b =>
                 {
                     b.Property<int>("Id")
@@ -240,6 +277,17 @@ namespace PosAstrid.Infrastructure.Migrations
                     b.HasIndex("VentaCabeceraId");
 
                     b.ToTable("VentaDetalles", (string)null);
+                });
+
+            modelBuilder.Entity("PosAstrid.Domain.Entities.CajaTurno", b =>
+                {
+                    b.HasOne("PosAstrid.Domain.Entities.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("PosAstrid.Domain.Entities.Inventario", b =>

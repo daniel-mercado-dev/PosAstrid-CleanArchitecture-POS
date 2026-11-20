@@ -3,6 +3,7 @@ using PosAstrid.Domain.Abstractions;
 using PosAstrid.Domain.Repositories;
 using PosAstrid.Infrastructure.Persistence;
 using PosAstrid.Infrastructure.Repositories;
+using PosAstrid.Infrastructure.Printing;
 
 
 
@@ -26,6 +27,28 @@ builder.Services.AddScoped<IInventarioRepository, InventarioRepository>();
 builder.Services.AddScoped<IVentaRepository, VentaRepository>();
 
 
+var modoImpresion = builder.Configuration["ModoImpresion"] ?? "Asincrono";
+
+builder.Services.AddScoped<IImpresoraTermica, ImpresoraSimulada>();
+
+if (modoImpresion == "Sincrono")
+{
+    builder.Services.AddScoped<ITicketPrintQueue, TicketPrintSincrono>();
+}
+else
+{
+    builder.Services.AddSingleton<TicketPrintQueue>();
+    builder.Services.AddSingleton<ITicketPrintQueue>(sp => sp.GetRequiredService<TicketPrintQueue>());
+    builder.Services.AddHostedService<TicketPrintWorker>();
+}
+
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(AppDbContext).Assembly);
+});
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -36,30 +59,5 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.UtcNow.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
 app.MapControllers();  
-
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

@@ -19,6 +19,11 @@ namespace PosAstrid.Infrastructure.Persistence
         public DbSet<VentaCabecera> VentaCabeceras => Set<VentaCabecera>();
         public DbSet<VentaDetalle> VentaDetalles => Set<VentaDetalle>();
 
+        public DbSet<Usuario> Usuario => Set<Usuario>();
+        public DbSet<Cliente> Cliente => Set<Cliente>();
+        public DbSet<Categoria> Categoria => Set<Categoria>();
+        public DbSet<CajaTurno> CajaTurno => Set<CajaTurno>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

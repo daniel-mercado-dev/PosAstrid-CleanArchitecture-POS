@@ -50,4 +50,56 @@ public class VentasController : ControllerBase
             return BadRequest(new { success = false, mensaje = "No se pudo guardar. Verifica que el usuario, cliente o producto existan." });
         }
     }
+
+[HttpGet]
+public async Task<IActionResult> ObtenerTodas(CancellationToken ct)
+{
+    var ventas = await _ventas.GetAllAsync(ct);
+
+    var resultado = ventas.Select(v => new
+    {
+        v.Id,
+        v.UsuarioId,
+        v.ClienteId,
+        v.MetodoPago,
+        v.MontoTotal,
+        Items = v.Detalles.Select(d => new
+        {
+            d.Id,
+            d.ProductoId,
+            d.Producto,
+            d.Cantidad,
+            d.PrecioUnitario
+        })
+    });
+
+    return Ok(resultado);
+}
+
+[HttpGet("{id:int}")]
+public async Task<IActionResult> ObtenerPorId(int id, CancellationToken ct)
+{
+    var venta = await _ventas.GetByIdAsync(id, ct);
+
+    if (venta is null)
+        return NotFound(new { success = false, mensaje = $"No se encontró la venta con ID {id}." });
+
+    return Ok(new
+    {
+        venta.Id,
+        venta.UsuarioId,
+        venta.ClienteId,
+        venta.MetodoPago,
+        venta.MontoTotal,
+        Items = venta.Detalles.Select(d => new
+        {
+            d.Id,
+            d.ProductoId,
+            d.Producto,
+            d.Cantidad,
+            d.PrecioUnitario
+        })
+    });
+}
+
 }
